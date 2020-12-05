@@ -66,7 +66,7 @@ app.put('/categoria/:id',(req, res) => {
         res.json({
             ok: true,
             msg: 'La categoria fue actualizada con exito',
-            catBD
+            catDB
         });
     });
 });
@@ -89,4 +89,47 @@ app.delete('/categoria/:id',(req, res) => {
         });
     });
 });
+app.put('/categoria/:id', (req, res) => {
+    let id = req.params.id;
+    let body = _.pick(req.body, ['descripcion', 'usuario']);
+
+    Categoria.findByIdAndUpdate(id, body, 
+        {new:true, runValidators: true, context: 'query'}, (err, catDB) => {
+            if(err){
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'ocurrio un error al actualizar',
+                    err
+                });
+            }
+
+            res.json({
+                ok: true,
+                msg: 'categoria actualizada con exito',
+                catDB
+            });
+
+    });
+});
+
+app.delete('/categoria/:id',(req, res) => {
+    let id = req.params.id;
+
+    Categoria.findByIdAndRemove(id, { context: 'query'},(err, catDB) => {
+        if(err){
+            return res.status(400).json({
+                ok: false,
+                msg: 'Ocurrio un error al eliminar',
+                err
+            });
+        }
+
+        res.json({
+            ok:true,
+            msg: 'La categoria fue eliminada',
+            catDB
+        });
+    });
+});
+
  module.exports = app;
